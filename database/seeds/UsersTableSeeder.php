@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\User;
 
 class UsersTableSeeder extends Seeder
 {
@@ -12,7 +13,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         for ($i=0; $i<10; ++$i) {
-            DB::table('users')->insert([
+			User::create([
                 'name' => str_random(10),
                 'email' => str_random(10).'@gmail.com',
                 'password' => bcrypt('1234'),
