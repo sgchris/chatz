@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Chat;
+use App\User;
+use Validator;
 
 class ChatsController extends Controller
 {
@@ -34,25 +37,60 @@ class ChatsController extends Controller
      */
     public function store(Request $request)
     {
-		validate($request->only(['name', 'user_id']), [
+		$validator = \Validator::make($request->all(), [
 			'name' => 'min:2|max:250',
 			'user_id' => 'required|numeric',
 		]);
+		if ($validator->fails()) {
+			return ['error' => $validator->errors()];
+		}
 
-		$name = $request->only('name');
-		$userId = $request->only('user_id');
+		$name = $request->get('name');
+		$userId = $request->get('user_id');
+
+		$attachedUser = User::find($userId);
+		if (!$attachedUser) {
+			return ['error' => 'User does not exist'];
+		}
 
 		// check the name
 		if (!empty($name)) {
 			$chat = Chat::where('name', 'like', $name)->get();
-			if ($chat) {
+			if ($chat->count() != 0) {
 				return ['error' => 'chat with that name already exists'];
 			}
+		} else {
+			// generate chat name
+			$name = $request->user()->name . ' and ' . $attachedUser->name;
 		}
 
 		// check if the chat already exists
+		//dd($request->user()->chats);
+		foreach ($request->user()->chats as $chat) {
+			//dd(count($chat->users), $chat->users->contains($userId), $userId, $request->user()->id);
+			// check if this is the chat
+			if (count($chat->users) == 2 && 
+				$chat->users->contains($userId) && 
+				$userId != $request->user()->id
+			) {
+				return [
+					'error' => 'chat already exists', 
+					'chat_id' => $chat->id
+				];
+			}
+		}
 
-		return ['result' => 'success'];
+		// create the chat and add the two users (current and attached)
+		$newChat = Chat::create([
+			'name' => $name
+		]);
+		$newChat->addUser($request->user());
+		$newChat->addUser($attachedUser);
+
+		return [
+			'result' => 'success', 
+			'chat_id' => $newChat->id
+		];
     }
 
     /**

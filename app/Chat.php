@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+	protected $fillable = ['name'];
+
     //
     public function messages() 
     {
@@ -19,10 +26,10 @@ class Chat extends Model
 
 	public function addUser(User $user) 
 	{
-		if ($this->users->contains($user)) {
+		if ($this->users->contains($user->id)) {
 			return false;
 		}
 
-		return $this->users->add($user);
+		return $this->users()->attach($user->id);
 	}
 }

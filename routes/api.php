@@ -27,11 +27,11 @@ Route::middleware('auth:api')->group(function() {
 		return $request->user();
 	});
 
-	Route::get('chats', function (Request $request) {
+	Route::get('/chats', function (Request $request) {
 		return $request->user()->chats;
 	});
 
-	Route::get('chats/{chat}', function (Request $request, Chat $chat) {
+	Route::get('/chats/{chat}', function (Request $request, Chat $chat) {
 		if (!in_array($request->user()->id, $chat->users()->pluck('id')->all())) {
 			return ['error' => 'no permissions'];
 		}
@@ -39,7 +39,7 @@ Route::middleware('auth:api')->group(function() {
 		return $chat;
 	});
 
-	Route::get('chats/{chat}/messages', function (Request $request, Chat $chat) {
+	Route::get('/chats/{chat}/messages', function (Request $request, Chat $chat) {
 		if ($request->user() != $chat->user()) {
 			return ['error' => 'no permissions'];
 		}
@@ -51,7 +51,7 @@ Route::middleware('auth:api')->group(function() {
 	// POST
 	//
 
-	Route::post('chats', 'ChatController@store'); // name (optional), user_id
+	Route::post('/chats', 'ChatsController@store'); // name (optional), user_id
 
 });
 
