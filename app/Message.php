@@ -10,4 +10,9 @@ class Message extends Model
     {
         return $this->belongsTo(Chat::class);
     }
+
+	public function scopeRecent($query)
+	{
+		return $query->orderBy('created_at', 'desc');
+	}
 }

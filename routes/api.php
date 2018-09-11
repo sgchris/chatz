@@ -2,6 +2,10 @@
 
 use Illuminate\Http\Request;
 
+use App\User;
+use App\Chat;
+use App\Message;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,7 +17,29 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function() {
+	Route::get('/user', function (Request $request) {
+		return $request->user();
+	});
+
+	Route::get('chats', function (Request $request) {
+		return $request->user()->chats;
+	});
+
+	Route::get('chats/{chat}', function (Request $request, Chat $chat) {
+		if (!in_array($request->user()->id, $chat->users()->pluck('id')->all())) {
+			return ['error' => 'no permissions'];
+		}
+
+		return $chat;
+	});
+
+	Route::get('chats/{chat}/messages', function (Request $request, Chat $chat) {
+		if ($request->user() != $chat->user()) {
+			return ['error' => 'no permissions'];
+		}
+
+		return $chat->messages()->recent()->limit(30)->get();
+	});
 });
 

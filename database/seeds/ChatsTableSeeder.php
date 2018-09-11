@@ -16,6 +16,8 @@ class ChatsTableSeeder extends Seeder
         for ($i=0; $i<10; ++$i) {
             DB::table('chats')->insert([
                 'name' => $faker->company,
+                'created_at' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         } 
     }
