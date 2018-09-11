@@ -18,6 +18,11 @@ use App\Message;
 */
 
 Route::middleware('auth:api')->group(function() {
+
+	//
+	// GET 
+	//
+
 	Route::get('/user', function (Request $request) {
 		return $request->user();
 	});
@@ -41,5 +46,12 @@ Route::middleware('auth:api')->group(function() {
 
 		return $chat->messages()->recent()->limit(30)->get();
 	});
+
+	//
+	// POST
+	//
+
+	Route::post('chats', 'ChatController@store'); // name (optional), user_id
+
 });
 

@@ -34,7 +34,25 @@ class ChatsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+		validate($request->only(['name', 'user_id']), [
+			'name' => 'min:2|max:250',
+			'user_id' => 'required|numeric',
+		]);
+
+		$name = $request->only('name');
+		$userId = $request->only('user_id');
+
+		// check the name
+		if (!empty($name)) {
+			$chat = Chat::where('name', 'like', $name)->get();
+			if ($chat) {
+				return ['error' => 'chat with that name already exists'];
+			}
+		}
+
+		// check if the chat already exists
+
+		return ['result' => 'success'];
     }
 
     /**

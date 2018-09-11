@@ -16,4 +16,13 @@ class Chat extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+	public function addUser(User $user) 
+	{
+		if ($this->users->contains($user)) {
+			return false;
+		}
+
+		return $this->users->add($user);
+	}
 }
