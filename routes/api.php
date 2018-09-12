@@ -27,9 +27,7 @@ Route::middleware('auth:api')->group(function() {
 		return $request->user();
 	});
 
-	Route::get('/chats', function (Request $request) {
-		return $request->user()->chats;
-	});
+	Route::get('/chats', 'ChatsController@index');
 
 	Route::get('/chats/{chat}', function (Request $request, Chat $chat) {
 		if (!in_array($request->user()->id, $chat->users()->pluck('id')->all())) {

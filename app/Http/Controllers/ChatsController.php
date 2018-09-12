@@ -16,7 +16,23 @@ class ChatsController extends Controller
      */
     public function index()
     {
-        //
+		$res = [];
+        $chats = request()->user()->chats;
+
+		foreach ($chats as $chat) {
+			$obj = $chat->only(['id', 'name']);
+			$obj['users'] = [];
+			foreach($chat->users as $user) {
+				$obj['users'][] = [
+					'id' => $user->id,
+					'name' => $user->name,
+					'email' => $user->email,
+				];
+			}
+			$res[] = $obj;
+		}
+
+		return $res;
     }
 
     /**

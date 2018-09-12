@@ -1,3 +1,4 @@
+// initialize the app
 var app = angular.module('chatz', []);
 
 // fix AJAX calls
@@ -46,51 +47,4 @@ app.config(['$httpProvider', function($httpProvider) {
 	}];
 }]);
 
-app.service('WebAPI', ['$http', function($http) {
-	return function(params) {
-		// add API token
-		params.params = params.params || {};
-		params.params.api_token = window.API_TOKEN;
 
-		// add base URL to the beginning
-		if (params.url) {
-			if (params.url.charAt(0) != '/') {
-				params.url = '/' + params.url;
-			}
-
-			params.url = window.BASE_URL + '/api' + params.url;
-		}
-
-		// perform the request
-		return $http.apply(this, arguments);
-	};
-}]);
-
-
-app.controller('HomeController', ['$scope', '$http', 'WebAPI', function($scope, $http, WebAPI) {
-
-	$scope.ui = {
-		tab: 'chats'
-	};
-
-	$scope.contacts = {
-		load: function() {
-		}
-	}
-
-	$scope.init = {
-		apiToken: window.API_TOKEN,
-		baseUrl: window.API_TOKEN,
-
-		load: function() {
-			WebAPI({
-				method: 'get',
-				url: 'chats'
-			}).then(function(res) {
-				console.log('res', res);
-			});
-		}
-	}
-
-	$scope.init.load();
-}]);
