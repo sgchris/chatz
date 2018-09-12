@@ -1,0 +1,29 @@
+<div class="row justify-content-center">
+	<div class="col-12 col-sm-3">
+		<div class="card">
+			<div class="card-header">
+				<a href="" ng-click="ui.tab = 'chats';" 
+					ng-class="{'text-muted': ui.tab != 'chats'}">Chats</a>
+				&nbsp;|&nbsp;
+				<a href="" ng-click="ui.tab = 'contacts';" 
+					ng-class="{'text-muted': ui.tab != 'contacts'}">Contacts</a>
+			</div>
+			<div class="card-body">
+
+				<div ng-show="ui.tab == 'chats'">
+					<div class="list-group">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-9">
+		<div class="card">
+			<div class="card-header">Message</div>
+			<div class="card-body">
+				You are logged in!
+			</div>
+		</div>
+	</div>
+</div>
+
