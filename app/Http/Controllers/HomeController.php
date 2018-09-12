@@ -24,6 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+		$params = ['api_token' => request()->user()->api_token];
+        return view('home', $params);
     }
 }
