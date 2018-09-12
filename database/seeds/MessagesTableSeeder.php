@@ -24,8 +24,6 @@ class MessagesTableSeeder extends Seeder
 				continue;
 			}
 
-			echo "total chat {$chatId} users - ", count($chatUsers), "\n";
-
             DB::table('messages')->insert([
                 'message' => $faker->text,
                 'chat_id' => $chatId,
