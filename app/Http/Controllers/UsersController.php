@@ -33,6 +33,7 @@ class UsersController extends Controller
 		}
 		foreach ($records as $user) {
 			$users[] = [
+				'id' => $user->id,
 				'name' => $user->name,
 				'email' => $user->email,
 				'joined' => $user->created_at->diffForHumans(),

@@ -31,13 +31,7 @@ Route::middleware('auth:api')->group(function() {
 
 	Route::get('/chats', 'ChatsController@index');
 
-	Route::get('/chats/{chat}', function (Request $request, Chat $chat) {
-		if (!in_array($request->user()->id, $chat->users()->pluck('id')->all())) {
-			return ['error' => 'no permissions'];
-		}
-
-		return $chat;
-	});
+	Route::get('/chats/{chat}', 'ChatsController@show');
 
 	Route::get('/chats/{chat}/messages', function (Request $request, Chat $chat) {
 		if ($request->user() != $chat->user()) {

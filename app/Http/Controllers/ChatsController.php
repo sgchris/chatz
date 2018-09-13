@@ -17,7 +17,7 @@ class ChatsController extends Controller
     public function index()
     {
 		$res = [];
-        $chats = request()->user()->chats;
+        $chats = request()->user()->chats->sortByDesc('updated_at');
 
 		foreach ($chats as $chat) {
 			$obj = $chat->only(['id', 'name']);
@@ -54,7 +54,7 @@ class ChatsController extends Controller
     public function store(Request $request)
     {
 		$validator = \Validator::make($request->all(), [
-			'name' => 'min:2|max:250',
+			'name' => 'min:2|max:250|unique:chats', // optional
 			'user_id' => 'required|numeric',
 		]);
 		if ($validator->fails()) {
@@ -73,7 +73,11 @@ class ChatsController extends Controller
 		if (!empty($name)) {
 			$chat = Chat::where('name', 'like', $name)->get();
 			if ($chat->count() != 0) {
-				return ['error' => 'chat with that name already exists'];
+				// update "updated at"
+				$chat->updated_at = \Carbon\Carbon::now();
+				$chat->save();
+
+				return ['error' => 'chat with that name already exists', 'chat_id' => $chat->id];
 			}
 		} else {
 			// generate chat name
@@ -81,14 +85,16 @@ class ChatsController extends Controller
 		}
 
 		// check if the chat already exists
-		//dd($request->user()->chats);
 		foreach ($request->user()->chats as $chat) {
-			//dd(count($chat->users), $chat->users->contains($userId), $userId, $request->user()->id);
 			// check if this is the chat
 			if (count($chat->users) == 2 && 
 				$chat->users->contains($userId) && 
 				$userId != $request->user()->id
 			) {
+				// update "updated at"
+				$chat->updated_at = \Carbon\Carbon::now();
+				$chat->save();
+
 				return [
 					'error' => 'chat already exists', 
 					'chat_id' => $chat->id
@@ -115,9 +121,31 @@ class ChatsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, Chat $chat)
     {
-        //
+		if (!in_array($request->user()->id, $chat->users()->pluck('id')->all())) {
+			return ['error' => 'no permissions'];
+		}
+
+		$obj = [
+			'id' => $chat->id,
+			'name' => $chat->name,
+			'messages' => [],
+		];
+
+		foreach ($chat->messages->sortBy('created_at') as $message) {
+			$messageObj = [
+				'id' => $message->id,
+				'message' => $message->message,
+				'created_at' => $message->created_at->diffForHumans(),
+				'user_id' => $message->user->id,
+				'user_name' => $message->user->name,
+				'user_email' => $message->user->email,
+			];
+			$obj['messages'][] = $messageObj;
+		}
+
+		return $obj;
     }
 
     /**

@@ -37,7 +37,38 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 	}
 
 	$scope.chats = {
+		selectedChat: null,
+
 		data: [],
+
+		create: function(contactId) {
+			WebAPI({
+				method: 'post',
+				url: 'chats',
+				data: {
+					user_id: contactId
+				}
+			}).then(function(res) {
+				// move to the chats tab
+				$scope.ui.tab = 'chats';
+
+				// get chat information
+				$scope.chats.show(res.data.chat_id);
+			});
+
+		},
+		show: function(chatId) {
+			WebAPI({
+				method: 'get',
+				url: 'chats/' + chatId
+			}).then(function(res) {
+				if (res.data.error) {
+					return false;
+				}
+
+				$scope.chats.selectedChat = res.data;
+			});
+		},
 		load: function() {
 			WebAPI({
 				method: 'get',

@@ -1,4 +1,4 @@
-<div class="row justify-content-center">
+<div class="row justify-content-center app-row-wrapper">
 	<div class="col-12 col-sm-3">
 		<div class="card">
 			<div class="card-header">
@@ -9,10 +9,11 @@
 					class="category mr-2"
 					ng-class="{'category-active': ui.tab == 'contacts'}">Contacts</a>
 			</div>
-
+			
+			<!-- chats -->
 			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'chats'">
 				<div class="list-group" ng-show="chats.data.length > 0">
-					<a href="" class="list-group-item list-group-item-action" ng-repeat="chat in chats.data">
+					<a href="" class="list-group-item list-group-item-action" ng-repeat="chat in chats.data" ng-click="chats.show(chat.id);">
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1">{{ chat.name }}</h5>
 							<small>{{ chat.updated_at }}</small>
@@ -29,6 +30,7 @@
 				</div>
 			</div>
 
+			<!-- contacts -->
 			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'contacts'">
 
 				<div class="list-group">
@@ -37,6 +39,7 @@
 					</div>
 					<a href="" class="list-group-item list-group-item-action" 
 						ng-repeat="contact in contacts.data" 
+						ng-click="chats.create(contact.id);"
 						ng-attr-title="Click to start conversation with {{ contact.name }}">
 
 						<h5 class="mb-1">{{ contact.name }}</h5>
@@ -46,7 +49,7 @@
 						<small>Joined {{ contact.joined }}</small>
 					</a>
 					<div class="list-group-item" ng-if="contacts.data.length == 0">
-						No contacts yet :( <br>
+						<span class="text-muted">Nothing here...</span>
 					</div>
 				</div>
 
@@ -59,7 +62,11 @@
 		<div class="card">
 			<div class="card-header">Message</div>
 			<div class="card-body">
-				You are logged in!
+				<ul class="list-group" ng-if="chats.selectedChat && chats.selectedChat.messages">
+					<li class="list-group-item one-message-wrapper" ng-repeat="message in chats.selectedChat.messages">
+						<strong>{{ message.created_at }}</strong> from <strong>{{ message.user_name }}:</strong> {{ message.message }}
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>

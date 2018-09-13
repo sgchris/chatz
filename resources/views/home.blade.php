@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="container-fluid" ng-app="chatz" ng-controller="HomeController">
+<div class="container-fluid app-wrapper" ng-app="chatz" ng-controller="HomeController">
 	<ng-include src="'angular-templates/home.html'"></ng-include>
 </div>
 

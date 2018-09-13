@@ -25,11 +25,17 @@ class Chat extends Model
         return $this->belongsToMany(User::class);
     }
 
-	public function addMessage($messageText) 
+	public function addMessage($messageText, $user_id = null)
 	{
 		$newMessage = new Message;
 		$newMessage->message = $messageText;
-		$newMessage->user_id = request()->user()->id;
+
+		// set the user of the message (the sender)
+		if (is_null($user_id)) {
+			$user_id = request()->user()->id;
+		}
+
+		$newMessage->user_id = $user_id;
 
 		return $this->messages()->save($newMessage);
 	}
