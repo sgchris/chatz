@@ -1,0 +1,15 @@
+.category {
+	display: inline-block;
+}
+
+.category-active {
+	border-bottom: 2px solid darkorange;
+}
+
+.sidebar-items-wrapper {
+	padding: 0;
+}
+
+.filter-wrapper {
+	padding: 5px;
+}

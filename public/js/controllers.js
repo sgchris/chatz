@@ -1,12 +1,38 @@
-app.controller('HomeController', ['$scope', '$http', 'WebAPI', function($scope, $http, WebAPI) {
+app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', function($scope, $http, $timeout, WebAPI) {
 
 	$scope.ui = {
-		tab: 'chats'
+		tab: 'chats',
+		contactsFilter: '',
 	};
 
 	$scope.contacts = {
 		data: [],
-		load: function() {
+
+		_timer: null,
+		_timerDelay: 1000,
+
+		load: function(delayed) {
+			// cancel the previous timer
+			if ($scope.contacts._timer) {
+				$timeout.cancel($scope.contacts._timer);
+			}
+
+			if (delayed) {
+				$scope.contacts._timer = $timeout(function() {
+					$scope.contacts.load();
+				}, $scope.contacts._timerDelay);
+				return;
+			}
+
+			WebAPI({
+				method: 'get',
+				url: 'users',
+				params: {
+					filter: $scope.ui.contactsFilter
+				}
+			}).then(function(res) {
+				$scope.contacts.data = res.data;
+			});
 		}
 	}
 

@@ -27,6 +27,8 @@ Route::middleware('auth:api')->group(function() {
 		return $request->user();
 	});
 
+	Route::get('/users', 'UsersController@index');
+
 	Route::get('/chats', 'ChatsController@index');
 
 	Route::get('/chats/{chat}', function (Request $request, Chat $chat) {

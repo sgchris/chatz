@@ -3,18 +3,56 @@
 		<div class="card">
 			<div class="card-header">
 				<a href="" ng-click="ui.tab = 'chats';" 
-					ng-class="{'text-muted': ui.tab != 'chats'}">Chats</a>
-				&nbsp;|&nbsp;
+					class="category mr-2"
+					ng-class="{'category-active': ui.tab == 'chats'}">Chats</a>
 				<a href="" ng-click="ui.tab = 'contacts';" 
-					ng-class="{'text-muted': ui.tab != 'contacts'}">Contacts</a>
+					class="category mr-2"
+					ng-class="{'category-active': ui.tab == 'contacts'}">Contacts</a>
 			</div>
-			<div class="card-body">
-				<div ng-show="ui.tab == 'chats'">
-					<div class="list-group">
 
-					</div>
+			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'chats'">
+				<div class="list-group" ng-show="chats.data.length > 0">
+					<a href="" class="list-group-item list-group-item-action" ng-repeat="chat in chats.data">
+						<div class="d-flex w-100 justify-content-between">
+							<h5 class="mb-1">{{ chat.name }}</h5>
+							<small>{{ chat.updated_at }}</small>
+						</div>
+						<p class="mb-1">
+							lates message goes here
+						</p>
+						<small>something small here</small>
+					</a>
+				</div>
+				<div class="list-group-item" ng-if="chats.data.length == 0">
+					No chats :( <br>
+					create new chat in <a href="" ng-click="ui.tab='contacts';">contacts tab</a>
 				</div>
 			</div>
+
+			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'contacts'">
+
+				<div class="list-group">
+					<div class="list-group-item filter-wrapper">
+						<input type="text" ng-model="ui.contactsFilter" class="form-control" placeholder="filter" ng-change="contacts.load('delayed');"/>
+					</div>
+					<a href="" class="list-group-item list-group-item-action" 
+						ng-repeat="contact in contacts.data" 
+						ng-attr-title="Click to start conversation with {{ contact.name }}">
+
+						<h5 class="mb-1">{{ contact.name }}</h5>
+						<p class="mb-1">
+							{{ contact.email }}
+						</p>
+						<small>Joined {{ contact.joined }}</small>
+					</a>
+					<div class="list-group-item" ng-if="contacts.data.length == 0">
+						No contacts yet :( <br>
+					</div>
+				</div>
+
+
+			</div>
+
 		</div>
 	</div>
 	<div class="col-sm-9">
