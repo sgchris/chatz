@@ -47,7 +47,7 @@ Route::middleware('auth:api')->group(function() {
 
 	Route::post('/chats', 'ChatsController@store'); // name (optional), user_id
 
-	Route::post('/chats/{chat_id}/messages', 'MessagesController@store'); // message, chat_id
+	Route::post('/chats/{chat_id}/messages', 'MessagesController@store'); // message
 
 });
 

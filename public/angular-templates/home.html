@@ -64,11 +64,22 @@
 	</div>
 	<div class="col-sm-9">
 		<div class="card">
-			<div class="card-header">Message</div>
+			<div class="card-header">Conversation</div>
 			<div class="card-body">
 				<ul class="list-group" ng-if="chats.selectedChat && chats.selectedChat.messages">
 					<li class="list-group-item one-message-wrapper" ng-repeat="message in chats.selectedChat.messages">
 						<strong>{{ message.created_at }}</strong> from <strong>{{ message.user_name }}:</strong> {{ message.message }}
+					</li>
+					<li class="list-group-item one-message-wrapper">
+						<form ng-submit="messages.create()">
+							<div class="input-group">
+								<input id="newMessageText" class="form-control" type="text" 
+									autocomplete="off"
+									placeholder="Your message here..."
+									ng-model="messages.newMessageText" 
+									ng-disabled="messages.newMessageSending" />
+								<button type="submit" class="input-group-append btn btn-primary">Send</button>
+						</form>
 					</li>
 				</ul>
 			</div>

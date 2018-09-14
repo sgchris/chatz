@@ -14,7 +14,6 @@ app.service('WebAPI', ['$http', function($http) {
 		}
 
 		// perform the request
-		console.log('arguments', arguments);
 		return $http.apply(this, arguments);
 	};
 }]);
