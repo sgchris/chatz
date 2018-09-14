@@ -13,7 +13,11 @@
 			<!-- chats -->
 			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'chats'">
 				<div class="list-group" ng-show="chats.data.length > 0">
-					<a href="" class="list-group-item list-group-item-action" ng-repeat="chat in chats.data" ng-click="chats.show(chat.id);">
+					<a href="" class="list-group-item list-group-item-action" 
+						ng-repeat="chat in chats.data" 
+						ng-click="chats.show(chat.id);" 
+						ng-class="{'active': chat.id == chats.selectedChat.id}">
+
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1">{{ chat.name }}</h5>
 							<small>{{ chat.updated_at }}</small>
