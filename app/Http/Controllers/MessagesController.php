@@ -16,7 +16,9 @@ class MessagesController extends Controller
      */
     public function index()
     {
-        //
+        // get messages of a user
+		
+
     }
 
     /**

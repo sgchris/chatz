@@ -41,6 +41,13 @@ Route::middleware('auth:api')->group(function() {
 		return $chat->messages()->recent()->limit(30)->get();
 	});
 
+	// get all messages
+	// params: 
+	// 	since=2018-09-25 14:51:43, (mysql proper datetime format)
+	// 	...
+	Route::get('/messages', 'MessagesController@index');
+
+
 	//
 	// POST
 	//
