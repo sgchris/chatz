@@ -14,9 +14,17 @@ class MessagesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // get messages of a user
+		$params = $request->only(['since']);
+		$validator = \Validator::make($params, [
+			'since' => 'date_format:"Y-m-d H:i:s"', // might be empty or not supported
+		]);
+		if ($validator->fails()) {
+			return ['error' => $validator->errors()];
+		}
+		
 		
 
     }

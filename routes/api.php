@@ -43,7 +43,7 @@ Route::middleware('auth:api')->group(function() {
 
 	// get all messages
 	// params: 
-	// 	since=2018-09-25 14:51:43, (mysql proper datetime format)
+	// 	since=2018-09-25 14:51:43, (mysql proper datetime format "Y-m-d H:i:s")
 	// 	...
 	Route::get('/messages', 'MessagesController@index');
 

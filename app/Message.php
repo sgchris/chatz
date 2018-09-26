@@ -24,4 +24,10 @@ class Message extends Model
 	{
 		return $query->orderBy('created_at', 'desc');
 	}
+
+	// dateTime: "Y-m-d H:i:s"
+	public function scopeSince($query, $dateTime) 
+	{
+
+	}
 }
