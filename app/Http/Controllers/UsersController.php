@@ -32,6 +32,10 @@ class UsersController extends Controller
 			$records = User::all();
 		}
 		foreach ($records as $user) {
+			if ($user->id == $request->user()->id) {
+				continue;
+			}
+
 			$users[] = [
 				'id' => $user->id,
 				'name' => $user->name,

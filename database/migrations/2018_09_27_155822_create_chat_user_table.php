@@ -16,6 +16,7 @@ class CreateChatUserTable extends Migration
         Schema::create('chat_user', function (Blueprint $table) {
             $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('chat_id')->index();
+            $table->dateTime('last_visit')->default(\Carbon\Carbon::now());
         });
     }
 

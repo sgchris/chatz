@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Chat;
 use App\User;
+use App\ChatUser;
 use Validator;
+use Carbon\Carbon;
 
 class ChatsController extends Controller
 {
@@ -143,6 +146,18 @@ class ChatsController extends Controller
 
 		$lastMessageTS = 0;
 
+		// find the pivot table instance
+		$chatUserInstance = DB::table('chat_user')
+			->where('chat_id', $chat->id)
+			->where('user_id', $request->user()->id)
+			->get()
+			->first();
+
+		// get last visit time
+		$lastVisitTS = $chatUserInstance && $chatUserInstance->last_visit ? 
+			Carbon::createFromFormat('Y-m-d H:i:s', $chatUserInstance->last_visit)->timestamp : 0;
+
+		// build the list with user's data
 		foreach ($chat->messages->sortBy('created_at') as $message) {
 			$messageObj = [
 				'id' => $message->id,
@@ -160,9 +175,13 @@ class ChatsController extends Controller
 		}
 
 		// update chat "updated_at" (that's the "last seen" attr)
-		if ($lastMessageTS > $chat->updated_at->timestamp) { 
-			$chat->updated_at = \Carbon\Carbon::now();
-			$chat->save();
+		if ($lastMessageTS > $lastVisitTS && $chatUserInstance) { 
+			$chatUserInstance = DB::table('chat_user')
+				->where('chat_id', $chat->id)
+				->where('user_id', $request->user()->id)
+				->update([
+					'last_visit' => Carbon::now()
+				]);
 		}
 
 		return $obj;
