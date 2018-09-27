@@ -41,3 +41,21 @@ main {
 	border: 1px solid #DDD;
 	padding: 5px;
 }
+
+.sidebar-chat-item-wrapper {
+	position: relative;
+	overflow: hidden;
+}
+
+.new-messages-badge {
+	position: absolute;
+    right: -25px;
+    top: 20px;
+    transform: rotate(45deg);
+    background: #C11;
+	color: #EEE;
+    padding: 0px 20px;
+    margin: 0;
+    box-sizing: border-box;
+    font-size: 10px;
+}

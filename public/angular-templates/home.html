@@ -13,10 +13,12 @@
 			<!-- chats -->
 			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'chats'">
 				<div class="list-group" ng-show="chats.data.length > 0">
-					<a href="" class="list-group-item list-group-item-action" 
+					<a href="" class="list-group-item list-group-item-action sidebar-chat-item-wrapper" 
 						ng-repeat="chat in chats.data" 
 						ng-click="chats.show(chat.id);" 
 						ng-class="{'active': chat.id == chats.selectedChat.id}">
+
+						<div class="new-messages-badge new-messages-badge-{{chat.id}}" ng-show="chat.newMessages">New messages</div>
 
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1">{{ chat.name }}</h5>
@@ -45,11 +47,10 @@
 						ng-repeat="contact in contacts.data" 
 						ng-click="chats.create(contact.id);"
 						ng-attr-title="Click to start conversation with {{ contact.name }}">
+						<span class="badge badge-pill">2</span>
 
 						<h5 class="mb-1">{{ contact.name }}</h5>
-						<p class="mb-1">
-							{{ contact.email }}
-						</p>
+						<p class="mb-1">{{ contact.email }}</p>
 						<small>Joined {{ contact.joined }}</small>
 					</a>
 					<div class="list-group-item" ng-if="contacts.data.length == 0">

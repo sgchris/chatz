@@ -61,6 +61,47 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 			});
 
 		},
+		getNewMessages: function() {
+			if ($scope.chats.pollTimer) {
+				$timeout.cancel($scope.chats.pollTimer);
+			}
+			var promise = WebAPI({
+				method: 'get',
+				url: 'messages',
+				params: {
+					since: $scope.messages.lastMessageTime
+				}
+			});
+			
+			promise.then(function(res) {
+				if (res.data.error) {
+					return false;
+				}
+
+				// check if we need to set focus on the new message input
+				var setNewMessageFocus = (
+					!$scope.chats.selectedChat ||
+					$scope.chats.selectedChat.id != res.data.id
+				);
+
+				$scope.chats.selectedChat = res.data;
+
+				// set the focus on the new message input
+				if (setNewMessageFocus) {
+					$timeout(function() {
+						angular.element('#newMessageText').focus();
+					});
+				}
+
+			}).finally(function() {
+				$scope.chats.pollTimer = $timeout(function() {
+					$scope.chats.show(chatId);
+				}, 5000);
+			});
+
+			return promise;
+
+		},
 		show: function(chatId) {
 			if ($scope.chats.pollTimer) {
 				$timeout.cancel($scope.chats.pollTimer);

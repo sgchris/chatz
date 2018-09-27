@@ -20,6 +20,7 @@ class ChatsController extends Controller
         $chats = request()->user()->chats->sortByDesc('updated_at');
 
 		foreach ($chats as $chat) {
+			// for every chat, add author info
 			$obj = $chat->only(['id', 'name']);
 			$obj['users'] = [];
 			foreach($chat->users as $user) {
@@ -29,6 +30,13 @@ class ChatsController extends Controller
 					'email' => $user->email,
 				];
 			}
+
+			// check unseen messages
+			$lastMessage = $chat->messages()->recent()->get()->first();
+			$obj['newMessages'] = (
+				$lastMessage && 
+				$lastMessage->created_at->timestamp > $chat->updated_at->timestamp
+			);
 			$res[] = $obj;
 		}
 
@@ -133,6 +141,8 @@ class ChatsController extends Controller
 			'messages' => [],
 		];
 
+		$lastMessageTS = 0;
+
 		foreach ($chat->messages->sortBy('created_at') as $message) {
 			$messageObj = [
 				'id' => $message->id,
@@ -143,6 +153,16 @@ class ChatsController extends Controller
 				'user_email' => $message->user->email,
 			];
 			$obj['messages'][] = $messageObj;
+
+			if ($message->created_at->timestamp > $lastMessageTS) {
+				$lastMessageTS = $message->created_at->timestamp;
+			}
+		}
+
+		// update chat "updated_at" (that's the "last seen" attr)
+		if ($lastMessageTS > $chat->updated_at->timestamp) { 
+			$chat->updated_at = \Carbon\Carbon::now();
+			$chat->save();
 		}
 
 		return $obj;

@@ -39,7 +39,7 @@ class User extends Authenticatable
 	 *
 	 * @param string $since format "Y-m-d H:i:s"
 	 * 
-	 * @return Eloquent\Collection
+	 * @return array of App\Message instances
 	 */
 	public function latestMessages($since)
 	{
