@@ -24,9 +24,10 @@ class MessagesController extends Controller
 		if ($validator->fails()) {
 			return ['error' => $validator->errors()];
 		}
-		
-		
 
+		$since = $params['since'];
+		
+		return $request->user()->latestMessages($since);
     }
 
     /**

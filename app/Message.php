@@ -28,6 +28,6 @@ class Message extends Model
 	// dateTime: "Y-m-d H:i:s"
 	public function scopeSince($query, $dateTime) 
 	{
-
+		return $query->where('created_at', '>', $dateTime);
 	}
 }
