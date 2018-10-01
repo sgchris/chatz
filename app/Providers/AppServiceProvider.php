@@ -23,8 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-
+		// URL linker (convert links inside text to linkable links "<a>")
 		$this->app->singleton('UrlLinker', function($app) {
 			return new \Youthweb\UrlLinker\UrlLinker([
 				'htmlLinkCreator' => function($url, $content) {
