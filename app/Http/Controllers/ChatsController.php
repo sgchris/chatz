@@ -49,6 +49,8 @@ class ChatsController extends Controller
 				];
 			}
 
+			$obj['latest_message'] = $chat->latestMessage();
+
 			// check unseen messages:
 			// find the pivot table instance
 			$chatUserInstance = DB::table('chat_user')

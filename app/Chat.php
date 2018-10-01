@@ -48,4 +48,9 @@ class Chat extends Model
 
 		return $this->users()->attach($user->id);
 	}
+
+	public function latestMessage() 
+	{
+		return $this->messages->sortByDesc('created_at')->first();
+	}
 }
