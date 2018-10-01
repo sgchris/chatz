@@ -36,6 +36,11 @@ main {
     text-overflow: ellipsis;
 }
 
+.sidebar-latest-message a {
+	color: inherit;
+	text-decoration: underline;
+}
+
 .filter-wrapper {
 	padding: 5px;
 }
