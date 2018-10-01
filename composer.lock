@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2d55ddc55a81fe893d01927e3fb53dd",
+    "content-hash": "fe12cc7c71a273758714bd294aa893d8",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2297,6 +2297,51 @@
                 "environment"
             ],
             "time": "2018-07-29T20:33:41+00:00"
+        },
+        {
+            "name": "youthweb/urllinker",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/youthweb/urllinker.git",
+                "reference": "0454300673cbd71d2204f2d70037a78821c9a64e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/youthweb/urllinker/zipball/0454300673cbd71d2204f2d70037a78821c9a64e",
+                "reference": "0454300673cbd71d2204f2d70037a78821c9a64e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7 || ^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Youthweb\\UrlLinker\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL3"
+            ],
+            "authors": [
+                {
+                    "name": "Søren Løvborg",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Dawid Nowak",
+                    "email": "code@dnowak.pl",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Autolink URLs in text or html",
+            "homepage": "https://github.com/youthweb",
+            "time": "2017-08-24T08:43:45+00:00"
         }
     ],
     "packages-dev": [

@@ -15,6 +15,7 @@ window.BASE_URL='{{ url('/') }}';
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.2/angular.min.js"></script>
 
 <script src="{{ url('js/init_app.js') }}"></script>
+<script src="{{ url('js/filters.js') }}"></script>
 <script src="{{ url('js/services.js') }}"></script>
 <script src="{{ url('js/controllers.js') }}"></script>
 

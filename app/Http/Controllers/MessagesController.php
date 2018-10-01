@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Youthweb\UrlLinker\UrlLinker;
 use Illuminate\Http\Request;
 use App\Chat;
 use App\Message;
@@ -71,7 +72,9 @@ class MessagesController extends Controller
 
 		$messageText = $request->get('message');
 
-		$messageText = $this->applyFilters($messageText);
+		// make some internal transformations
+		$messageText = $this->applyMessageFilters($messageText);
+
 		$chatId = $request->get('chat_id');
 
 		if (!$request->user()->chats->contains($chat_id)) {
@@ -130,4 +133,12 @@ class MessagesController extends Controller
     {
         //
     }
+
+	protected function applyMessageFilters($messageText) 
+	{
+		$urlLinker = new UrlLinker();
+		$messageText = $urlLinker->linkUrlsAndEscapeHtml($messageText);
+		return $messageText;
+		//return $messageText;
+	}
 }

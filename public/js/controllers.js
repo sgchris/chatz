@@ -90,6 +90,7 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 
 				var newMessages = res.data,
 					updatedChats = [];
+
 				newMessages.forEach(function(messageData) {
 					// update 'last message time'
 					if (!$scope.chats.lastMessageTime) {
