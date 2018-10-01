@@ -136,7 +136,8 @@ class MessagesController extends Controller
 
 	protected function applyMessageFilters($messageText) 
 	{
-		$urlLinker = new UrlLinker();
+		// https://github.com/youthweb/urllinker
+		$urlLinker = resolve('UrlLinker');//new UrlLinker();
 		$messageText = $urlLinker->linkUrlsAndEscapeHtml($messageText);
 		return $messageText;
 		//return $messageText;
