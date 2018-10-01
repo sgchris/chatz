@@ -70,6 +70,8 @@ class MessagesController extends Controller
 		}
 
 		$messageText = $request->get('message');
+
+		$messageText = $this->applyFilters($messageText);
 		$chatId = $request->get('chat_id');
 
 		if (!$request->user()->chats->contains($chat_id)) {

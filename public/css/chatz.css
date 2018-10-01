@@ -30,6 +30,12 @@ main {
 	padding: 0;
 }
 
+.sidebar-latest-message {
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .filter-wrapper {
 	padding: 5px;
 }

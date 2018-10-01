@@ -24,10 +24,10 @@
 							<h5 class="mb-1">{{ chat.name }}</h5>
 							<small>{{ chat.updated_at }}</small>
 						</div>
-						<p class="mb-1">
-							lates message goes here
+						<p class="mb-1 sidebar-latest-message">
+							{{ chat.latest_message.message }}&nbsp;
 						</p>
-						<small>something small here</small>
+						<small>{{ chat.latest_message.created_at_human_diff }}&nbsp;</small>
 					</a>
 				</div>
 				<div class="list-group-item" ng-if="chats.data.length == 0">

@@ -50,6 +50,7 @@ class ChatsController extends Controller
 			}
 
 			$obj['latest_message'] = $chat->latestMessage();
+			$obj['latest_message']['created_at_human_diff'] = $chat->latestMessage()->created_at->diffForHumans();
 
 			// check unseen messages:
 			// find the pivot table instance

@@ -88,6 +88,57 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 					return false;
 				}
 
+				var newMessages = res.data,
+					updatedChats = [];
+				newMessages.forEach(function(messageData) {
+					// update 'last message time'
+					if (!$scope.chats.lastMessageTime) {
+						$scope.chats.lastMessageTime = messageData.created_at;
+					} else if (
+						(new Date($scope.chats.lastMessageTime)) < 
+						(new Date(messageData.created_at))
+					) {
+						$scope.chats.lastMessageTime = messageData.created_at;
+					}
+
+					// collect the updated chat IDs
+					if (updatedChats.indexOf(messageData.chat_id) < 0) {
+						updatedChats.push(messageData.chat_id);
+					}
+				});
+
+				if (updatedChats.length > 0) {
+					$scope.chats.load(updatedChats).then(function(res) {
+						if (res.data.error) {
+							return false;
+						}
+
+						res.data.forEach(function(updatedChatData) {
+							// update the current chat record
+							var updatedExistingChat = false;
+							$scope.chats.data.forEach(function(existingChatData, i) {
+								if (existingChatData.id == updatedChatData.id) {
+									$scope.chats.data[i] = updatedChatData;
+
+									// load the messages if this is the currently selected chat
+									if (existingChatData.id == $scope.chats.selectedChat.id) {
+										$scope.chats.show(existingChatData.id);
+									}
+
+									updatedExistingChat = true;
+								}
+							});
+
+							// prepend new chat
+							if (!updatedExistingChat) {
+								$scope.chats.data.unshift(updatedChatData);
+							}
+						});
+					});
+				}
+				return;
+
+
 				var newMessages = res.data;
 				var missingChats = [];
 				if (!newMessages || newMessages.length === 0) {
@@ -98,6 +149,8 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 				});
 
 				newMessages.forEach(function(messageData) {
+
+					// update 'last message time'
 					if (!$scope.chats.lastMessageTime) {
 						$scope.chats.lastMessageTime = messageData.created_at;
 					} else if (
