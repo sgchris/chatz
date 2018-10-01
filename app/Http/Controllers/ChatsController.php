@@ -17,11 +17,26 @@ class ChatsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-		$res = [];
-        $chats = request()->user()->chats->sortByDesc('updated_at');
+    public function index(Request $request)
+	{
+        // get messages of a user
+		$params = $request->only(['chat_ids']);
+		$validator = \Validator::make($params, [
+			// optional. format: 123,432,5345,234
+			'chat_ids' => 'min:1|max:250|regex:/^[\d\,]+$/', 
+		]);
+		if ($validator->fails()) {
+			return ['error' => $validator->errors()];
+		}
 
+		if (isset($params['chat_ids']) && !empty($params['chat_ids'])) {
+			$chats = $request->user()->chats;
+			$chats = $chats->whereIn('id', explode(',', $params['chat_ids']));
+		} else {
+			$chats = $request->user()->chats->sortByDesc('updated_at');
+		}
+
+		$res = [];
 		foreach ($chats as $chat) {
 			// for every chat, add author info
 			$obj = $chat->only(['id', 'name']);
@@ -34,11 +49,18 @@ class ChatsController extends Controller
 				];
 			}
 
-			// check unseen messages
+			// check unseen messages:
+			// find the pivot table instance
+			$chatUserInstance = DB::table('chat_user')
+				->where('chat_id', $chat->id)
+				->where('user_id', $request->user()->id)
+				->get()
+				->first();
 			$lastMessage = $chat->messages()->recent()->get()->first();
+			$lastVisitTS = Carbon::createFromFormat('Y-m-d H:i:s', $chatUserInstance->last_visit)->timestamp;
 			$obj['newMessages'] = (
 				$lastMessage && 
-				$lastMessage->created_at->timestamp > $chat->updated_at->timestamp
+				$lastMessage->created_at->timestamp > $lastVisitTS
 			);
 			$res[] = $obj;
 		}

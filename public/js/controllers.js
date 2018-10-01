@@ -43,6 +43,7 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 
 		pollTimer: null,
 
+		// create new chat
 		create: function(contactId) {
 			WebAPI({
 				method: 'post',
@@ -61,16 +62,25 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 			});
 
 		},
+
+		lastMessageTime: null,
+
+		newMessagesTimer: null,
 		getNewMessages: function() {
-			if ($scope.chats.pollTimer) {
-				$timeout.cancel($scope.chats.pollTimer);
+			if ($scope.chats.newMessagesTimer) {
+				$timeout.cancel($scope.chats.newMessagesTimer);
 			}
+
+			// set parameters
+			var params = {};
+			if ($scope.chats.lastMessageTime) {
+				params['since'] = $scope.chats.lastMessageTime;
+			}
+
 			var promise = WebAPI({
 				method: 'get',
 				url: 'messages',
-				params: {
-					since: $scope.messages.lastMessageTime
-				}
+				params: params
 			});
 			
 			promise.then(function(res) {
@@ -78,24 +88,53 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 					return false;
 				}
 
-				// check if we need to set focus on the new message input
-				var setNewMessageFocus = (
-					!$scope.chats.selectedChat ||
-					$scope.chats.selectedChat.id != res.data.id
-				);
+				var newMessages = res.data;
+				var missingChats = [];
+				if (!newMessages || newMessages.length === 0) {
+					return true;
+				}
+				var existingChatIds = $scope.chats.data.map(function(chatData) {
+					return chatData.id;
+				});
 
-				$scope.chats.selectedChat = res.data;
+				newMessages.forEach(function(messageData) {
+					if (!$scope.chats.lastMessageTime) {
+						$scope.chats.lastMessageTime = messageData.created_at;
+					} else if (
+						(new Date($scope.chats.lastMessageTime)) < 
+						(new Date(messageData.created_at))
+					) {
+						$scope.chats.lastMessageTime = messageData.created_at;
+					}
 
-				// set the focus on the new message input
-				if (setNewMessageFocus) {
-					$timeout(function() {
-						angular.element('#newMessageText').focus();
+					// check if this is a new chat (not in the list)
+					if (
+						existingChatIds.indexOf(messageData.chat_id) < 0 &&
+						missingChats.indexOf(messageData.chat_id) < 0
+					) {
+						missingChats.push(messageData.chat_id);
+					}
+					
+					// mark the chat as 'has unread messages'
+					$scope.chats.data.forEach(function(chatData, i) {
+						if (chatData.id == messageData.chat_id) {
+							$scope.chats.data[i].newMessages = true;
+						}
+					});
+				});
+
+				if (missingChats.length > 0) {
+					$scope.chats.load(missingChats).then(function(res) {
+						if (res.data.error) {
+							return false;
+						}
+						$scope.chats.data = $scope.chats.data.concat(res.data);
 					});
 				}
-
-			}).finally(function() {
-				$scope.chats.pollTimer = $timeout(function() {
-					$scope.chats.show(chatId);
+				
+			}).finally(function() { 
+				$scope.chats.newMessagesTimer = $timeout(function() {
+					$scope.chats.getNewMessages();
 				}, 5000);
 			});
 
@@ -103,9 +142,6 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 
 		},
 		show: function(chatId) {
-			if ($scope.chats.pollTimer) {
-				$timeout.cancel($scope.chats.pollTimer);
-			}
 			var promise = WebAPI({
 				method: 'get',
 				url: 'chats/' + chatId
@@ -124,6 +160,13 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 
 				$scope.chats.selectedChat = res.data;
 
+				// mark as "seen"
+				$scope.chats.data.forEach(function(chatData, i) {
+					if (chatData.id == $scope.chats.selectedChat.id) {
+						$scope.chats.data[i].newMessages = false;
+					}
+				});
+
 				// set the focus on the new message input
 				if (setNewMessageFocus) {
 					$timeout(function() {
@@ -131,24 +174,40 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 					});
 				}
 
-			}).finally(function() {
-				$scope.chats.pollTimer = $timeout(function() {
-					$scope.chats.show(chatId);
-				}, 5000);
 			});
 
 			return promise;
 		},
-		load: function() {
+
+		calculateLatestMessageTime: function() {
+
+		},
+
+		// load list of chats
+		load: function(chatIds) {
+			var chatIdsProvided = (chatIds && chatIds.length > 0);
+
+			var params = {};
+			if (chatIdsProvided) {
+				params['chat_ids'] = chatIds.join(',');
+			}
 			var promise = WebAPI({
 				method: 'get',
-				url: 'chats'
+				url: 'chats',
+				params: params
 			});
 			
 			promise.then(function(res) {
-				$scope.chats.data = res.data;
+				if (!chatIdsProvided) {
+					$scope.chats.data = res.data;
+				}
 
-				if ($scope.chats.data.length > 0) {
+				// show the first chat (only if loading ALL the available chats)
+				if (!chatIdsProvided && $scope.chats.data.length > 0) {
+					// calculate the latest message time
+					$scope.chats.calculateLatestMessageTime();
+
+					// show the first chat
 					$scope.chats.show($scope.chats.data[0].id);
 				}
 			});
@@ -195,4 +254,8 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 
 	$scope.contacts.load();
 	$scope.chats.load();
+
+	$timeout(function() {
+		$scope.chats.getNewMessages();
+	}, 5000);
 }]);

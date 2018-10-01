@@ -29,7 +29,8 @@ Route::middleware('auth:api')->group(function() {
 
 	Route::get('/users', 'UsersController@index');
 
-	Route::get('/chats', 'ChatsController@index');
+	// optional: chat_ids: 23,43,213,... (max 250 chats)
+	Route::get('/chats', 'ChatsController@index'); 
 
 	Route::get('/chats/{chat}', 'ChatsController@show');
 

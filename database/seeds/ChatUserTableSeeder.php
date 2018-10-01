@@ -11,12 +11,14 @@ class ChatUserTableSeeder extends Seeder
      */
     public function run()
     {
-
-        $users = \App\User::all()->pluck('id');
+		DB::table('chat_user')->truncate();
+        
+		$users = \App\User::all()->pluck('id');
         $chats = \App\Chat::all()->pluck('id');
         $pairs = [];
-        for ($i=0; $i<10; ++$i) {
+        for ($i=0; $i<30; ++$i) {
             $userId = $users[mt_rand(0, count($users) - 1)];
+            $user2Id = $users[mt_rand(0, count($users) - 1)];
             $chatId = $chats[mt_rand(0, count($chats) - 1)];
             $pairName = $userId.'_'.$chatId;
             if (!array_key_exists($pairName, $pairs)) {

@@ -21,6 +21,12 @@ class MessagesController extends Controller
 		$validator = \Validator::make($params, [
 			'since' => 'date_format:"Y-m-d H:i:s"', // might be empty or not supported
 		]);
+
+		// set the default when no 'since' provided
+		if (!isset($params['since']) || empty($params['since'])) {
+			$params['since'] = '1970-1-1 0:0:0';
+		}
+
 		if ($validator->fails()) {
 			return ['error' => $validator->errors()];
 		}

@@ -46,7 +46,8 @@ class User extends Authenticatable
 		$messages = [];
 
 		foreach ($this->chats as $chat) {
-			$chatLatestMessages = Message::where('chat_id', $chat->id)->since($since)->get()->all();
+			$chatLatestMessages = Message::where('chat_id', $chat->id)
+				->since($since)->get()->all();
 			$messages = array_merge($messages, $chatLatestMessages);
 		}
 
