@@ -1,5 +1,5 @@
-app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabFocus', 
-	function($scope, $http, $timeout, WebAPI, TabFocus) {
+app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabFocus', 'BrowserNotification',
+	function($scope, $http, $timeout, WebAPI, TabFocus, BrowserNotification) {
 
 	$scope.ui = {
 		tab: 'chats',
@@ -93,6 +93,7 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 					updatedChats = [];
 
 				newMessages.forEach(function(messageData) {
+
 					// update 'last message time'
 					if (!$scope.chats.lastMessageTime) {
 						$scope.chats.lastMessageTime = messageData.created_at;
@@ -137,56 +138,18 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 							}
 						});
 					});
-				}
-				return;
 
-
-				var newMessages = res.data;
-				var missingChats = [];
-				if (!newMessages || newMessages.length === 0) {
-					return true;
-				}
-				var existingChatIds = $scope.chats.data.map(function(chatData) {
-					return chatData.id;
-				});
-
-				newMessages.forEach(function(messageData) {
-
-					// update 'last message time'
-					if (!$scope.chats.lastMessageTime) {
-						$scope.chats.lastMessageTime = messageData.created_at;
-					} else if (
-						(new Date($scope.chats.lastMessageTime)) < 
-						(new Date(messageData.created_at))
-					) {
-						$scope.chats.lastMessageTime = messageData.created_at;
+					// trigger notification
+					if (!document.hasFocus()) {
+						BrowserNotification.notify('New message(s) in '+updatedChats.length+' chat(s)', function() {
+							// show the first unread message
+							if (updatedChats.indexOf($scope.chats.selectedChat.id) < 0) {
+								$scope.chats.show(updatedChats[0]);
+							}
+						});
 					}
-
-					// check if this is a new chat (not in the list)
-					if (
-						existingChatIds.indexOf(messageData.chat_id) < 0 &&
-						missingChats.indexOf(messageData.chat_id) < 0
-					) {
-						missingChats.push(messageData.chat_id);
-					}
-					
-					// mark the chat as 'has unread messages'
-					$scope.chats.data.forEach(function(chatData, i) {
-						if (chatData.id == messageData.chat_id) {
-							$scope.chats.data[i].newMessages = true;
-						}
-					});
-				});
-
-				if (missingChats.length > 0) {
-					$scope.chats.load(missingChats).then(function(res) {
-						if (res.data.error) {
-							return false;
-						}
-						$scope.chats.data = $scope.chats.data.concat(res.data);
-					});
 				}
-				
+
 			}).finally(function() { 
 				$scope.chats.newMessagesTimer = $timeout(function() {
 					$scope.chats.getNewMessages();
@@ -316,16 +279,4 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 		$scope.chats.getNewMessages();
 	}, 5000);
 
-	TabFocus.onBlur(function() {
-		//if ($scope.chats.newMessagesTimer) {
-		//	$timeout.cancel($scope.chats.newMessagesTimer);
-		//}
-
-		$scope.messages.notifyNewMessages = true;
-	});
-	TabFocus.onFocus(function() {
-		//$scope.chats.getNewMessages();
-
-		$scope.messages.notifyNewMessages = true;
-	});
 }]);
