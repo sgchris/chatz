@@ -19,4 +19,34 @@ app.service('WebAPI', ['$http', function($http) {
 }]);
 
 
+// check when the tab is active
+app.service('TabFocus', [function() {
+	var focusCallbacks = [],
+		blurCallbacks = [];
 
+	// set callbacks
+	angular.element(window).on('focus', function() {
+		focusCallbacks.forEach(function(focusCallback) {
+			focusCallback();
+		});
+	});
+	angular.element(window).on('blur', function() {
+		blurCallbacks.forEach(function(blurCallback) {
+			blurCallback();
+		});
+	});
+
+	return {
+		onFocus: function(callbackFn) {
+			if (typeof(callbackFn) == 'function') {
+				focusCallbacks.push(callbackFn);
+			}
+		},
+
+		onBlur: function(callbackFn) {
+			if (typeof(callbackFn) == 'function') {
+				blurCallbacks.push(callbackFn);
+			}
+		}
+	};
+}]);

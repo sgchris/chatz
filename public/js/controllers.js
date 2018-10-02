@@ -1,4 +1,5 @@
-app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', function($scope, $http, $timeout, WebAPI) {
+app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabFocus', 
+	function($scope, $http, $timeout, WebAPI, TabFocus) {
 
 	$scope.ui = {
 		tab: 'chats',
@@ -274,6 +275,8 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 		newMessageText: '',
 		newMessageSending: false,
 
+		notifyNewMessages: false,
+
 		create: function() {
 			// avoid sending twice
 			if ($scope.messages.newMessageSending) {
@@ -312,4 +315,17 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', funct
 	$timeout(function() {
 		$scope.chats.getNewMessages();
 	}, 5000);
+
+	TabFocus.onBlur(function() {
+		//if ($scope.chats.newMessagesTimer) {
+		//	$timeout.cancel($scope.chats.newMessagesTimer);
+		//}
+
+		$scope.messages.notifyNewMessages = true;
+	});
+	TabFocus.onFocus(function() {
+		//$scope.chats.getNewMessages();
+
+		$scope.messages.notifyNewMessages = true;
+	});
 }]);
