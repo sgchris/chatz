@@ -1,5 +1,5 @@
 <div class="row justify-content-center app-row-wrapper">
-	<div class="col-12 col-sm-3">
+	<div class="col-12 col-sm-3 main-panel">
 		<div class="card">
 			<div class="card-header">
 				<a href="" ng-click="ui.tab = 'chats';" 
@@ -62,11 +62,11 @@
 
 		</div>
 	</div>
-	<div class="col-sm-9">
+	<div class="col-12 col-sm-9 main-panel">
 		<div class="card">
 			<div class="card-header">Conversation</div>
-			<div class="card-body">
-				<ul class="list-group" ng-if="chats.selectedChat && chats.selectedChat.messages">
+			<div class="card-body conversation-wrapper">
+				<ul class="list-group messages-list" ng-if="chats.selectedChat && chats.selectedChat.messages">
 					<li class="list-group-item one-message-wrapper" ng-repeat="message in chats.selectedChat.messages">
 						<strong>{{ message.created_at }}</strong> from <strong>{{ message.user_name }}:</strong> <span ng-bind-html="message.message | to_trusted"></span>
 					</li>

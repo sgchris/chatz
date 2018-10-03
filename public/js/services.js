@@ -43,7 +43,6 @@ app.service('TabFocus', [function() {
 	angular.element(window).on('focus', function() {
 		obj.isOnFocus = true;
 
-		console.log('onfocus',obj);
 		focusCallbacks.forEach(function(focusCallback) {
 			focusCallback();
 		});
@@ -51,7 +50,6 @@ app.service('TabFocus', [function() {
 	angular.element(window).on('blur', function() {
 		obj.isOnFocus = false;
 
-		console.log('onblur',obj);
 		blurCallbacks.forEach(function(blurCallback) {
 			blurCallback();
 		});
@@ -75,7 +73,6 @@ app.service('BrowserNotification', ['$timeout', function($timeout) {
 			});
 
 			if (typeof(callbackFn) == 'function') {
-				console.log('setting onclick', onClickCallbackFn);
 				notification.onclick = onClickCallbackFn;
 			}
 		},

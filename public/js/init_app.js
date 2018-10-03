@@ -47,5 +47,7 @@ app.config(['$httpProvider', function($httpProvider) {
 	}];
 }]);
 
-
-
+// convert date to "Y-m-d H:i:s"
+Date.prototype.toMySqlString = function() {
+	return this.getFullYear()+'-'+(this.getMonth()+1)+'-'+this.getDate()+' '+this.getHours()+':'+this.getMinutes()+':'+this.getSeconds();
+};

@@ -3,19 +3,22 @@ html, body, div#app {
 }
 
 main {
-	height: calc(100% - 25px);
+	height: calc(100% - 55px);
+	max-height: calc(100% - 55px);
 }
 
 .app-wrapper, .app-row-wrapper, .app-row-wrapper .card {
 	height: 100%;
 }
 
+.app-row-wrapper .main-panel,
 .app-row-wrapper .card {
 	max-height: 100%;
 }
 
 .app-row-wrapper .card-body {
 	overflow: auto;
+	max-height: 100%;
 }
 
 .category {
@@ -43,6 +46,10 @@ main {
 
 .filter-wrapper {
 	padding: 5px;
+}
+
+.messages-list {
+	margin-bottom: 20px;
 }
 
 .one-message-wrapper {

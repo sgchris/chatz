@@ -64,6 +64,13 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 
 		},
 
+		scrollConversationToTheBottom: function() {
+			// scroll down to the bottom
+			angular.element('.conversation-wrapper').get(0).scrollTo(
+				0, angular.element('.conversation-wrapper .messages-list').get(0).clientHeight
+			);
+		},
+
 		lastMessageTime: null,
 
 		newMessagesTimer: null,
@@ -171,6 +178,9 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 				}
 
 				// check if we need to set focus on the new message input
+				if ($scope.chats.selectedChat) {
+					console.log('two IDs', $scope.chats.selectedChat.id, res.data.id);
+				}
 				var setNewMessageFocus = (
 					!$scope.chats.selectedChat ||
 					$scope.chats.selectedChat.id != res.data.id
@@ -186,19 +196,34 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 				});
 
 				// set the focus on the new message input
+				console.log('setNewMessageFocus');
 				if (setNewMessageFocus) {
 					$timeout(function() {
+						$scope.chats.scrollConversationToTheBottom();
+
 						angular.element('#newMessageText').focus();
+						angular.element('#newMessageText').get(0).focus();
 					});
 				}
 
+				// scroll to the bottom
+				$timeout(function() {
+					$scope.chats.scrollConversationToTheBottom();
+				});
 			});
 
 			return promise;
 		},
 
 		calculateLatestMessageTime: function() {
+			$scope.chats.data.forEach(function(chatData) {
+				var chatLatestMessage = new Date(chatData.latest_message.created_at);
+				var lastMessageTime = new Date($scope.chats.lastMessageTime);
 
+				if (chatLatestMessage > lastMessageTime) {
+					$scope.chats.lastMessageTime = chatLatestMessage.toMySqlString();
+				}
+			});
 		},
 
 		// load list of chats
