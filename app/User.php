@@ -33,6 +33,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Chat::class);
     }
 
+	public function friends() 
+	{
+		return $this->belongsToMany(User::class, 'relations', 'user_id', 'friend_id');
+	}
+
+	public function accessers() 
+	{
+		return $this->belongsToMany(User::class, 'relations', 'user_id', 'friend_id');
+	}
+
 	/**
 	 * get latest messages from all the chats of the user
 	 * (messages from other users too)
