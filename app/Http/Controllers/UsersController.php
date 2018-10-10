@@ -22,15 +22,24 @@ class UsersController extends Controller
 			return ['error' => $validator->errors()];
 		}
 
-		$users = [];
+		// get the current user
+		$user = $request->user();
+
 		$filter = request('filter');
 		if (!empty($filter)) {
-			$records = User::where('name', 'like', '%'.$filter.'%')
-				->orWhere('email', 'like', '%'.$filter.'%')
-				->get();
+			$friends = $user->friends->where('name', 'like', '%'.$filter.'%')
+				->orWhere('email', 'like', '%'.$filter.'%')->get();
+
+			$followers = $user->followers->where('name', 'like', '%'.$filter.'%')
+				->orWhere('email', 'like', '%'.$filter.'%')->get();
+
+			$records = $friends->merge($followers)->all()
 		} else {
 			$records = User::all();
 		}
+		
+		// get only the relevant fields
+		$users = [];
 		foreach ($records as $user) {
 			if ($user->id == $request->user()->id) {
 				continue;
