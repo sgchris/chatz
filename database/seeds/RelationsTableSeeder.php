@@ -29,6 +29,8 @@ class RelationsTableSeeder extends Seeder
                 DB::table('relations')->insert([
                     'user_id' => $userId,
                     'friend_id' => $user2Id,
+					'updated_at' => \Carbon\Carbon::now(),
+					'created_at' => \Carbon\Carbon::now(),
                 ]);
             }
         } 
