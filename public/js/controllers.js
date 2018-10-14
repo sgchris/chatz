@@ -12,6 +12,13 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 		_timer: null,
 		_timerDelay: 1000,
 
+		newEmailAddress: '',
+
+		create: function() {
+
+
+		},
+
 		load: function(delayed) {
 			// cancel the previous timer
 			if ($scope.contacts._timer) {
