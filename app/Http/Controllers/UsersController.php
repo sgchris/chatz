@@ -27,17 +27,21 @@ class UsersController extends Controller
 
 		$filter = request('filter');
 		if (!empty($filter)) {
-			$friends = $user->friends->where('name', 'like', '%'.$filter.'%')
+			$friends = $user->friends()->where('name', 'like', '%'.$filter.'%')
 				->orWhere('email', 'like', '%'.$filter.'%')->get();
 
-			$followers = $user->followers->where('name', 'like', '%'.$filter.'%')
+			$followers = $user->followers()->where('name', 'like', '%'.$filter.'%')
 				->orWhere('email', 'like', '%'.$filter.'%')->get();
 
-			$records = $friends->merge($followers)->all()
+			$records = $friends->merge($followers)->all();
 		} else {
-			$records = User::all();
+			// friends and followers
+			$records = $user->friends->merge($user->followers);
 		}
-		
+
+		// follows and friends may appear on both lists
+		$records = $records->unique('id');
+
 		// get only the relevant fields
 		$users = [];
 		foreach ($records as $user) {
