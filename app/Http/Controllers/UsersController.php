@@ -26,15 +26,22 @@ class UsersController extends Controller
 		$user = $request->user();
 
 		$filter = request('filter');
+
+		// list of friends Ids
+		$friendsIds = [];
 		if (!empty($filter)) {
 			$friends = $user->friends()->where('name', 'like', '%'.$filter.'%')
 				->orWhere('email', 'like', '%'.$filter.'%')->get();
+			$friendsIds = $user->friends()->where('name', 'like', '%'.$filter.'%')
+				->orWhere('email', 'like', '%'.$filter.'%')->pluck('id');
 
 			$followers = $user->followers()->where('name', 'like', '%'.$filter.'%')
 				->orWhere('email', 'like', '%'.$filter.'%')->get();
 
-			$records = $friends->merge($followers)->all();
+			$records = $friends->merge($followers);
 		} else {
+			$friendsIds = $user->friends->pluck('id');
+
 			// friends and followers
 			$records = $user->friends->merge($user->followers);
 		}
@@ -54,6 +61,7 @@ class UsersController extends Controller
 				'name' => $user->name,
 				'email' => $user->email,
 				'joined' => $user->created_at->diffForHumans(),
+				'approved' => in_array($user->id, $friendsIds->toArray()) ? $user->pivot->approved : null,
 			];
 		}
 

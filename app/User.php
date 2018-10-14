@@ -35,12 +35,14 @@ class User extends Authenticatable
 
 	public function friends() 
 	{
-		return $this->belongsToMany(User::class, 'relations', 'user_id', 'friend_id');
+		return $this->belongsToMany(User::class, 'relations', 'user_id', 'friend_id')
+			->withPivot('approved', 'email_sent_at');
 	}
 
 	public function followers() 
 	{
-		return $this->belongsToMany(User::class, 'relations', 'friend_id', 'user_id');
+		return $this->belongsToMany(User::class, 'relations', 'friend_id', 'user_id')
+			->withPivot('approved', 'email_sent_at');
 	}
 
 	/**

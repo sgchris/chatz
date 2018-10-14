@@ -3,17 +3,20 @@
 		<div class="card">
 			<div class="card-header">
 				<!-- new conversation -->
-				<a href="" class="category mr-2 float-right" title="Start new conversation">New</a>
+				<a href="" ng-click="ui.tab = 'new';" 
+					class="category mr-2 float-right" title="Start new conversation"
+					ng-class="{'category-active': ui.tab == 'new'}">New</a>
 
 				<!-- tabs -->
-				<a href="" ng-click="ui.tab = 'chats';" 
+				<a href="" ng-click="ui.tab = 'chats';" title="Recent conversations"
 					class="category mr-2"
 					ng-class="{'category-active': ui.tab == 'chats'}">Chats</a>
-				<a href="" ng-click="ui.tab = 'contacts';" 
+				<a href="" ng-click="ui.tab = 'contacts';" title="Browse contacts"
 					class="category mr-2"
 					ng-class="{'category-active': ui.tab == 'contacts'}">Contacts</a>
 			</div>
 			
+
 			<!-- chats -->
 			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'chats'">
 				<div class="list-group" ng-show="chats.data.length > 0">
@@ -60,10 +63,30 @@
 						<span class="text-muted">Nothing here...</span>
 					</div>
 				</div>
-
-
 			</div>
 
+			<!-- new conversations/users -->
+			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'new'">
+				<div class="list-group">
+					<div class="list-group-item filter-wrapper">
+						<input type="text" ng-model="contacts.newEmailAddress" 
+							class="form-control" placeholder="type email address" 
+							ng-change="contacts.create();"/>
+					</div>
+					<a href="" class="list-group-item list-group-item-action" 
+						ng-repeat="contact in contacts.data | onlyPendingContacts" 
+						ng-click="chats.create(contact.id);"
+						ng-attr-title="Click to start conversation with {{ contact.name }}">
+
+						<h5 class="mb-1">{{ contact.name }}</h5>
+						<p class="mb-1">{{ contact.email }}</p>
+						<small>Joined {{ contact.joined }}</small>
+					</a>
+					<div class="list-group-item" ng-if="contacts.data.length == 0">
+						<span class="text-muted">Nothing here...</span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="col-12 col-sm-9 main-panel">
