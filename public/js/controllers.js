@@ -12,10 +12,10 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 		_timer: null,
 		_timerDelay: 1000,
 
+		displayNewEmailAddress: false,
 		newEmailAddress: '',
-
 		create: function() {
-
+			console.log('adding', $scope.contacts.newEmailAddress);
 
 		},
 
@@ -32,11 +32,15 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 				return;
 			}
 
+			var filterString = $scope.contacts.displayNewEmailAddress ? 
+				$scope.contacts.newEmailAddress : 
+				$scope.ui.contactsFilter;
+
 			WebAPI({
 				method: 'get',
 				url: 'users',
 				params: {
-					filter: $scope.ui.contactsFilter
+					filter: filterString
 				}
 			}).then(function(res) {
 				$scope.contacts.data = res.data;

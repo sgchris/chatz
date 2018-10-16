@@ -30,13 +30,17 @@ class UsersController extends Controller
 		// list of friends Ids
 		$friendsIds = [];
 		if (!empty($filter)) {
-			$friends = $user->friends()->where('name', 'like', '%'.$filter.'%')
-				->orWhere('email', 'like', '%'.$filter.'%')->get();
-			$friendsIds = $user->friends()->where('name', 'like', '%'.$filter.'%')
-				->orWhere('email', 'like', '%'.$filter.'%')->pluck('id');
+			$friends = $user->friends()->where(function($query) use ($filter) {
+				$query->where('name', 'like', '%'.$filter.'%')
+					->orWhere('email', 'like', '%'.$filter.'%');
+			})->get();
+			
+			$friendsIds = $friends->pluck('id');
 
-			$followers = $user->followers()->where('name', 'like', '%'.$filter.'%')
-				->orWhere('email', 'like', '%'.$filter.'%')->get();
+			$followers = $user->followers()->where(function($query) use ($filter) {
+				$query->where('name', 'like', '%'.$filter.'%')
+					->orWhere('email', 'like', '%'.$filter.'%');
+			})->get();
 
 			$records = $friends->merge($followers);
 		} else {
@@ -56,12 +60,16 @@ class UsersController extends Controller
 				continue;
 			}
 
+			// friend or follower
+			$isFriend = in_array($user->id, $friendsIds->toArray());
+
 			$users[] = [
 				'id' => $user->id,
 				'name' => $user->name,
 				'email' => $user->email,
 				'joined' => $user->created_at->diffForHumans(),
-				'approved' => in_array($user->id, $friendsIds->toArray()) ? $user->pivot->approved : null,
+				'type' => ($isFriend ? 'friend' : 'follower'),
+				'approved' => $user->pivot->approved,
 			];
 		}
 

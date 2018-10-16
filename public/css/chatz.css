@@ -43,7 +43,10 @@ main {
 	color: inherit;
 	text-decoration: underline;
 }
-
+.newEmailAddressLabel {
+	padding-left: 10px;
+	margin-bottom: 0;
+}
 .filter-wrapper {
 	padding: 5px;
 }

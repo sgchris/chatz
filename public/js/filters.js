@@ -13,9 +13,11 @@ app.filter('onlyPendingContacts', ['$sce', function($sce){
 	return function(data) {
 		var newData = [];
 		data.forEach(function(contactData) {
-			console.log('contactData', contactData);
+			if (contactData.type == 'friend' && !contactData.approved) {
+				newData.push(contactData);
+			}
 		});
-		return data;
+		return newData;
 	};
 }]);
 
