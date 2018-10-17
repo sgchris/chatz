@@ -17,6 +17,7 @@ class CreateRelationsTable extends Migration
             $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('friend_id')->index();
 			$table->boolean('approved')->default(true);
+			$table->boolean('responded')->default(true);
 			$table->dateTime('email_sent_at')->nullable();
             $table->timestamps();
         });

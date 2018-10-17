@@ -53,6 +53,8 @@ Route::middleware('auth:api')->group(function() {
 	// POST
 	//
 
+	Route::post('/users', 'UsersController@store'); // *email, name, password, is_registered
+
 	Route::post('/chats', 'ChatsController@store'); // name (optional), user_id
 
 	Route::post('/chats/{chat_id}/messages', 'MessagesController@store'); // message

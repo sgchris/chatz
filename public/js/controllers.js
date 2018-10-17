@@ -3,11 +3,11 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 
 	$scope.ui = {
 		tab: 'chats',
-		contactsFilter: '',
 	};
 
 	$scope.contacts = {
 		data: [],
+		filter: '',
 
 		_timer: null,
 		_timerDelay: 1000,
@@ -17,6 +17,13 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 		create: function() {
 			console.log('adding', $scope.contacts.newEmailAddress);
 
+		},
+
+		focusNewEmailAddress: function() {
+			// focus the new email address input
+			$timeout(function() {
+				angular.element('input#newEmailAddress').get(0).focus();
+			});
 		},
 
 		load: function(delayed) {
@@ -34,15 +41,19 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 
 			var filterString = $scope.contacts.displayNewEmailAddress ? 
 				$scope.contacts.newEmailAddress : 
-				$scope.ui.contactsFilter;
+				$scope.contacts.filter;
 
+			var params = {
+				filter: filterString
+			};
+
+			console.log('sending webapi', params);
 			WebAPI({
 				method: 'get',
 				url: 'users',
-				params: {
-					filter: filterString
-				}
+				params: params
 			}).then(function(res) {
+				console.log('received web api', res);
 				$scope.contacts.data = res.data;
 			});
 		}
@@ -188,10 +199,6 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 					return false;
 				}
 
-				// check if we need to set focus on the new message input
-				if ($scope.chats.selectedChat) {
-					console.log('two IDs', $scope.chats.selectedChat.id, res.data.id);
-				}
 				var setNewMessageFocus = (
 					!$scope.chats.selectedChat ||
 					$scope.chats.selectedChat.id != res.data.id
@@ -207,7 +214,6 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 				});
 
 				// set the focus on the new message input
-				console.log('setNewMessageFocus');
 				if (setNewMessageFocus) {
 					$timeout(function() {
 						$scope.chats.scrollConversationToTheBottom();

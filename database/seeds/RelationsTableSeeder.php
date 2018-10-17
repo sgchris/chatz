@@ -25,6 +25,10 @@ class RelationsTableSeeder extends Seeder
             $pairName = $userId.'_'.$user2Id;
             if (!array_key_exists($pairName, $pairs)) {
                 $pairs[$pairName] = true;
+
+				// set the opposite too
+				$pairName2= $user2Id.'_'.$userId;
+                $pairs[$pairName2] = true;
                 
                 DB::table('relations')->insert([
                     'user_id' => $userId,

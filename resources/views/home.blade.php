@@ -17,6 +17,7 @@ window.BASE_URL='{{ url('/') }}';
 <script src="{{ url('js/init_app.js') }}"></script>
 <script src="{{ url('js/filters.js') }}"></script>
 <script src="{{ url('js/services.js') }}"></script>
+<script src="{{ url('js/directives.js') }}"></script>
 <script src="{{ url('js/controllers.js') }}"></script>
 
 @endsection

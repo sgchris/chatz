@@ -43,12 +43,22 @@ main {
 	color: inherit;
 	text-decoration: underline;
 }
-.newEmailAddressLabel {
+.new-email-address-label {
 	padding-left: 10px;
 	margin-bottom: 0;
 }
+.new-contact-form-wrapper {
+	background: #fff1d6;
+}
 .filter-wrapper {
 	padding: 5px;
+}
+
+.contact-type {
+	float: right;
+}
+.contact-pending {
+	color: #C11;
 }
 
 .messages-list {

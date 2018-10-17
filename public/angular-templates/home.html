@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-header">
 				<!-- new conversation -->
-				<a href="" ng-click="contacts.displayNewEmailAddress = true; ui.tab = 'contacts';" 
+				<a href="" ng-click="contacts.displayNewEmailAddress = true; ui.tab = 'contacts'; contacts.focusNewEmailAddress();" 
 					class="category mr-2 float-right" title="Add new contact"
 					ng-disabled="contacts.displayNewEmailAddress">New</a>
 
@@ -47,29 +47,29 @@
 			<div class="card-body sidebar-items-wrapper" ng-show="ui.tab == 'contacts'">
 
 				<div class="list-group">
-					<div class="list-group-item filter-wrapper" ng-show="contacts.displayNewEmailAddress">
+					<div class="list-group-item filter-wrapper new-contact-form-wrapper" ng-show="contacts.displayNewEmailAddress">
+						<a href="" class="close" title="Cancel" ng-click="contacts.displayNewEmailAddress = false;">&times;</a>
 						<form ng-submit="contacts.create();">
-							<label for="newEmailAddress" class="newEmailAddressLabel"><small>Add new contact email address</small></label>
-							<input type="email" 
+							<label for="newEmailAddress" class="new-email-address-label">
+								<small>Add new contact</small>
+							</label>
+							<input type="text" 
 								id="newEmailAddress"
 								ng-model="contacts.newEmailAddress" 
 								class="form-control" 
-								placeholder="Type the contact email address" 
+								placeholder="Type person's email address" 
 								ng-change="contacts.load('delayed');"/>
 						</form>
 					</div>
 					<div class="list-group-item filter-wrapper" ng-show="!contacts.displayNewEmailAddress">
-						<input type="text" ng-model="ui.contactsFilter" class="form-control" placeholder="filter" ng-change="contacts.load('delayed');"/>
+						<input type="text" ng-model="contacts.filter" class="form-control" placeholder="filter" ng-change="contacts.load('delayed');"/>
 					</div>
-					<a href="" class="list-group-item list-group-item-action" 
+					<sidebar-contact 
 						ng-repeat="contact in contacts.data" 
+						ng-model="contact"
 						ng-click="chats.create(contact.id);"
 						ng-attr-title="Click to start conversation with {{ contact.name }}">
-
-						<h5 class="mb-1">{{ contact.name }}</h5>
-						<p class="mb-1">{{ contact.email }}</p>
-						<small>Joined {{ contact.joined }}</small>
-					</a>
+					</sidebar-contact>
 					<div class="list-group-item" ng-if="contacts.data.length == 0">
 						<span class="text-muted">Nothing here...</span>
 					</div>

@@ -94,7 +94,19 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+		$validator = \Validator::make($request->all(), [
+			'email' => 'required|email', 
+
+			'name' => 'min:2|max:250',
+			'password' => 'min:2|max:250',
+			'is_registered' => 'numeric',
+		]);
+		if ($validator->fails()) {
+			return ['error' => $validator->errors()];
+		}
+
+		// get the current user
+		$user = $request->user();
     }
 
     /**
