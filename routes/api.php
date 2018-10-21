@@ -49,6 +49,13 @@ Route::middleware('auth:api')->group(function() {
 	Route::get('/messages', 'MessagesController@index');
 
 
+	// 
+	// PUT 
+	// 
+
+	// 'name', 'email', 'password', 'is_registered', 'approve_follower_id'
+	Route::put('/users', 'UsersController@update'); 
+
 	//
 	// POST
 	//

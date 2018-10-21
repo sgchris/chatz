@@ -107,6 +107,8 @@ class UsersController extends Controller
 
 		// get the current user
 		$user = $request->user();
+
+		// unfinished
     }
 
     /**
@@ -140,7 +142,44 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+		$params = $request->all();
+		$validator = \Validator::make($params, [
+			'name' => 'min:2|max:250',
+			'email' => 'email', 
+			'password' => 'min:2|max:250',
+			'is_registered' => 'numeric',
+			'approve_follower_id' => 'numeric|exists:users,id',
+		]);
+
+		if ($validator->fails()) {
+			return ['error' => $validator->errors()];
+		}
+
+		if (isset($params['approve_follower_id'])) {
+			$this->_approveFollowerId($request->user()->id, $params['approve_follower_id']);
+		}
+
+
+		$user = $request->user();
+		if (isset($params['name'])) {
+			$user->name = $params['name'];
+		}
+
+		if (isset($params['email'])) {
+			$user->email = $params['email'];
+		}
+
+		if (isset($params['password'])) {
+			$user->password = bcrypt($params['password']);
+		}
+
+		if (isset($params['is_registered'])) {
+			$user->is_registered = $params['is_registered'];
+		}
+
+		$user->save();
+
+		return ['results' => 'success'];
     }
 
     /**
@@ -153,4 +192,22 @@ class UsersController extends Controller
     {
         //
     }
+
+	
+	/**
+	 * approve new relations
+	 *
+	 * @param int $userId the current user ID
+	 * @param int $followerId the requesting user ID (the follower)
+	 *
+	 * @return bool
+	 */
+	protected function _approveFollowerId($userId, $followerId) {
+		return DB::table('relations')
+			->where('user_id', $followerId)
+			->where('friend_id', $userId)
+			->update([
+				'approved' => 1
+			]);
+	}
 }
