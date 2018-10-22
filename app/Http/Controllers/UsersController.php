@@ -94,7 +94,8 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-		$validator = \Validator::make($request->all(), [
+		$params = $request->all();
+		$validator = \Validator::make($params, [
 			'email' => 'required|email', 
 
 			'name' => 'min:2|max:250',
@@ -105,10 +106,32 @@ class UsersController extends Controller
 			return ['error' => $validator->errors()];
 		}
 
-		// get the current user
-		$user = $request->user();
+		$user = User::where('email', $params['email'])->get()->first();
+		if ($user) {
+			if (!$user->email_verified_at) {
+				$this->_sendVerificationEmailToUser($user);
+			}
+		} else {
 
-		// unfinished
+			$user = new User();
+			$user->email = $params['email'];
+
+			if (isset($params['name'])) {
+				$user->name = $params['name'];
+			}
+
+			if (isset($params['password'])) {
+				$user->password = bcrypt($params['password']);
+			}
+
+			if (isset($params['is_registered'])) {
+				$user->is_registered = $params['is_registered'];
+			}
+
+			$user->save();
+		}
+		
+		return ['result' => 'success', 'user' => $user];
     }
 
     /**
@@ -159,7 +182,7 @@ class UsersController extends Controller
 			$this->_approveFollowerId($request->user()->id, $params['approve_follower_id']);
 		}
 
-
+		// get the user object, and update relevant fields
 		$user = $request->user();
 		if (isset($params['name'])) {
 			$user->name = $params['name'];
@@ -202,12 +225,43 @@ class UsersController extends Controller
 	 *
 	 * @return bool
 	 */
-	protected function _approveFollowerId($userId, $followerId) {
+	protected function _approveFollowerId($userId, $followerId) 
+	{
 		return DB::table('relations')
 			->where('user_id', $followerId)
 			->where('friend_id', $userId)
 			->update([
 				'approved' => 1
 			]);
+	}
+
+
+	/**
+	 * send invitation email to a user
+	 *
+	 * @param User $user the user whom to send the email
+	 *
+	 * @return bool
+	 */
+	protected function _sendVerificationEmailToUser(User $user) 
+	{
+		// check if the email has to be sent (didn't send, or sent long time ago)
+		$oneMonth = 60*60 * 24 * 31;
+		$emailSent = false;
+		if (!$user->email_verified_at) {
+			// send verification email
+
+
+			// send email result
+			$emailSent = true;
+		} elseif ($user->email_verified_at->timestamp < time() - $oneMonth) {
+			// send verification reminder email
+
+
+			// send email result
+			$emailSent = true;
+		}
+
+		return $emailSent;
 	}
 }
