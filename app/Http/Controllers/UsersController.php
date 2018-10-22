@@ -179,7 +179,7 @@ class UsersController extends Controller
 		}
 
 		if (isset($params['approve_follower_id'])) {
-			$this->_approveFollowerId($request->user()->id, $params['approve_follower_id']);
+			$this->_approveFollowerId($params['approve_follower_id']);
 		}
 
 		// get the user object, and update relevant fields
@@ -225,8 +225,9 @@ class UsersController extends Controller
 	 *
 	 * @return bool
 	 */
-	protected function _approveFollowerId($userId, $followerId) 
+	protected function _approveFollowerId($followerId) 
 	{
+		$userId = Request::user()->id;
 		return DB::table('relations')
 			->where('user_id', $followerId)
 			->where('friend_id', $userId)
