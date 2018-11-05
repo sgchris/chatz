@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-header">
 				<!-- new conversation -->
-				<a href="" ng-click="contacts.displayNewEmailAddress = true; ui.tab = 'contacts'; contacts.focusNewEmailAddress();" 
+				<a href="" ng-click="contacts.openForm();" 
 					class="category mr-2 float-right" title="Add new contact"
 					ng-disabled="contacts.displayNewEmailAddress">New</a>
 
@@ -48,7 +48,7 @@
 
 				<div class="list-group">
 					<div class="list-group-item filter-wrapper new-contact-form-wrapper" ng-show="contacts.displayNewEmailAddress">
-						<a href="" class="close" title="Cancel" ng-click="contacts.displayNewEmailAddress = false;">&times;</a>
+						<a href="" class="close" title="Cancel" ng-click="contacts.closeForm();">&times;</a>
 						<form ng-submit="contacts.create();">
 							<label for="newEmailAddress" class="new-email-address-label">
 								<small>Add new contact</small>

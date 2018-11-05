@@ -19,6 +19,23 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 
 		},
 
+		openForm: function() {
+			$scope.contacts.displayNewEmailAddress = true; 
+			$scope.ui.tab = 'contacts'; 
+
+			// set the new email address with what typed in the filter
+			$scope.contacts.newEmailAddress = $scope.contacts.filter;
+
+			// focus on the form
+			$scope.contacts.focusNewEmailAddress();
+		},
+
+		closeForm: function() {
+			$scope.contacts.displayNewEmailAddress = false;
+			// move the typed email to the filter
+			$scope.contacts.filter = $scope.contacts.newEmailAddress;
+		},
+
 		focusNewEmailAddress: function() {
 			// focus the new email address input
 			$timeout(function() {
