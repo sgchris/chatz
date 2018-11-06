@@ -97,7 +97,6 @@ class UsersController extends Controller
 		$params = $request->all();
 		$validator = \Validator::make($params, [
 			'email' => 'required|email', 
-
 			'name' => 'min:2|max:250',
 			'password' => 'min:2|max:250',
 			'is_registered' => 'numeric',
@@ -112,25 +111,12 @@ class UsersController extends Controller
 				$this->_sendVerificationEmailToUser($user);
 			}
 		} else {
-
-			$user = new User();
-			$user->email = $params['email'];
-
-			if (isset($params['name'])) {
-				$user->name = $params['name'];
-			}
-
-			if (isset($params['password'])) {
-				$user->password = bcrypt($params['password']);
-			}
-
-			if (isset($params['is_registered'])) {
-				$user->is_registered = $params['is_registered'];
-			}
-
-			$user->save();
+			$user = $this->_createNewUser($params);
 		}
-		
+
+		// create new relation record
+		$this->_createRelation($request->user()->id, $user->id);
+
 		return ['result' => 'success', 'user' => $user];
     }
 
@@ -264,5 +250,86 @@ class UsersController extends Controller
 		}
 
 		return $emailSent;
+	}
+
+
+	/**
+	 * create new user
+	 *
+	 * @param array $data new user's data. only valid email required, all the rest might be generated
+	 *
+	 * @return \App\User
+	 */
+	protected function _createNewUser($data) 
+	{
+		$user = new User();
+
+		// set the email
+		$user->email = $data['email'];
+
+		// set the name
+		if (!isset($data['name']) || empty($data['name'])) {
+			// set the name as the email without the domain
+			$data['name'] = substr($data['email'], 0, strpos($data['email'], '@'));
+		}
+		$user->name = $data['name'];
+
+		// set the password
+		if (!isset($data['password']) || empty($data['password'])) {
+			// generate some random password.
+			// the user will have to change it once approving the email
+			$data['password'] = microtime(true);
+		}
+		$user->password = bcrypt($data['password']);
+
+		// set as not registered by default
+		if (!isset($data['is_registered']) || empty($data['is_registered'])) {
+			$data['is_registered'] = 0;
+		}
+		$user->is_registered = $data['is_registered'];
+
+		$user->save();
+
+		return $user;
+	}
+
+	
+	/**
+	 * create new relationship - in case of a chat initialization
+	 *
+	 * @param integer $userId the current user ID
+	 * @param integer $friendId friend's ID (the new user's ID)
+	 *
+	 * @return null
+	 */
+	protected function _createRelation($userId, $friendId)
+	{
+		// check if exists
+		$relation = \DB::table('relations')
+			->where(function($query) use ($userId, $friendId) {
+				$query->where('user_id', $userId)
+					->where('friend_id', $friendId);
+			})
+			->orWhere(function($query) use ($userId, $friendId) {
+				$query->where('user_id', $friendId)
+					->where('friend_id', $userId);
+			})->get()->first();
+
+		if (!$relation) {
+			\DB::table('relations')->insert([
+				'user_id' => $userId,
+				'friend_id' => $friendId,
+				'approved' => false,
+				'responded' => false,
+			]);
+
+			// send email and update the relation's "email_sent_at"
+			//
+			// ..
+		} elseif (!$relation->email_sent_at) {
+			// send email (again) and update the relation's email_sent_at
+			//
+			// ..
+		}
 	}
 }

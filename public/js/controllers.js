@@ -15,8 +15,33 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 		displayNewEmailAddress: false,
 		newEmailAddress: '',
 		create: function() {
-			console.log('adding', $scope.contacts.newEmailAddress);
+			// check if the user exists (if there's something in contacts panel)
+			if ($scope.contacts.data.length > 0) {
+				// open a chat with the first user
+				return $scope.chats.create($scope.contacts.data[0].id);
+			}
 
+			// create new user
+			WebAPI({
+				method: 'post',
+				url: 'users',
+				data: {
+					email: $scope.contacts.newEmailAddress
+				}
+			}).then(function(res) {
+				if (res.data.result == 'success') {
+					// open a chat with the user
+					$scope.chats.create(res.data.user.id);
+
+					// reload the contacts
+					$scope.contacts.load();
+
+					return;
+				}
+				
+				alert('Cannot create new user');
+				console.error('Cannot create new user', res);
+			});
 		},
 
 		openForm: function() {
@@ -64,7 +89,6 @@ app.controller('HomeController', ['$scope', '$http', '$timeout', 'WebAPI', 'TabF
 				filter: filterString
 			};
 
-			console.log('sending webapi', params);
 			WebAPI({
 				method: 'get',
 				url: 'users',
